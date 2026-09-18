@@ -1,3 +1,17 @@
+# 🛂 DocuAgent
+
+### Autonomous AI Bureaucracy Copilot
+
+Stop searching for documents.
+Stop repeating information.
+Stop figuring out government requirements manually.
+
+DocuAgent understands your request,
+finds the documents you already have,
+checks requirements,
+identifies missing information,
+and guides you through the workflow.
+
 # DocuAgent — Autonomous Document & Bureaucracy Management Agent
 
 > **Bank-Grade Secure Personal Document Vault & Autonomous Bureaucracy Copilot**
