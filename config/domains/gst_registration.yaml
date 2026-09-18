@@ -1,0 +1,49 @@
+domain: gst_registration
+display_name: GST Registration
+description: Goods and Services Tax registration for businesses and freelancers
+required_documents:
+  - type: pan_card
+    description: mandatory for all
+  - type: aadhaar_card
+    description: for authentication
+  - type: business_registration
+    description: partnership deed / incorporation certificate / shop act license
+  - type: address_proof_business
+    description: electricity bill / rent agreement / property tax receipt
+  - type: bank_statement
+    description: cancelled cheque or bank statement with account details
+  - type: passport_photo
+    description: of authorized signatory
+  - type: digital_signature
+    description: DSC for companies/LLPs
+conditional_requirements:
+  - condition: "business_type == 'company'"
+    then_require:
+      - type: board_resolution
+        description: board resolution
+      - type: moa_aoa
+        description: MOA AOA
+  - condition: "business_type == 'partnership'"
+    then_require:
+      - type: partnership_deed
+        description: partnership deed
+  - condition: "business_type == 'freelancer'"
+    then_require:
+      - type: freelance_contract_samples
+        description: freelance contract samples
+  - condition: "annual_turnover > 4000000"
+    then_require:
+      - type: mandatory_registration_notice
+        description: mandatory registration notice
+eligibility_rules:
+  - rule: "turnover > 2000000"
+    message: "mandatory threshold for goods and services"
+compliance_obligations:
+  - GSTR-1 filing (monthly/quarterly)
+  - GSTR-3B filing (monthly)
+  - Annual return GSTR-9
+  - E-invoicing if turnover > 5 crore
+extraction_patterns:
+  business_type: "(company|partnership|freelancer)"
+  annual_turnover: "\\d+"
+  state: "[A-Z][a-z]+"

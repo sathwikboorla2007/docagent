@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DocuAgent — Secure Bureaucracy Management Agent</title>
+    <meta name="description" content="Production-grade AI agent for navigating complex bureaucratic processes with bank-grade AES-GCM encryption and zero-knowledge PII masking.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- App Container -->
+    <div id="app-container" class="hidden">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-mark">
+                    <span class="shield-icon">🛡️</span>
+                    <div class="logo-text">
+                        <span class="brand-title">DocuAgent</span>
+                        <span class="brand-sub">Security & Bureaucracy AI</span>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section-label">MAIN WORKSPACE</div>
+                <button class="nav-btn active" data-view="chat" id="nav-chat">
+                    <span class="nav-icon">💬</span>
+                    <span class="nav-label">AI Copilot</span>
+                    <span class="nav-badge" id="chat-badge">Active</span>
+                </button>
+                <button class="nav-btn" data-view="documents" id="nav-documents">
+                    <span class="nav-icon">🔐</span>
+                    <span class="nav-label">Document Vault</span>
+                    <span class="nav-count" id="vault-count">0</span>
+                </button>
+                <button class="nav-btn" data-view="submissions" id="nav-submissions">
+                    <span class="nav-icon">📋</span>
+                    <span class="nav-label">Submissions</span>
+                    <span class="nav-count" id="submissions-count">0</span>
+                </button>
+                <button class="nav-btn" data-view="reminders" id="nav-reminders">
+                    <span class="nav-icon">⏰</span>
+                    <span class="nav-label">Reminders</span>
+                    <span class="nav-count alert-count hidden" id="reminders-count">0</span>
+                </button>
+
+                <div class="nav-section-label">GOVERNANCE</div>
+                <button class="nav-btn" data-view="audit" id="nav-audit">
+                    <span class="nav-icon">🔒</span>
+                    <span class="nav-label">Audit Trail</span>
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="security-chip">
+                    <div class="chip-dot"></div>
+                    <div class="chip-info">
+                        <span class="chip-title">AES-GCM-256</span>
+                        <span class="chip-desc">Zero-Knowledge Vault</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- App Header -->
+            <header class="app-header">
+                <div class="header-left">
+                    <div class="active-domain-pill" id="active-domain-pill">
+                        <span class="domain-dot"></span>
+                        <span id="header-domain-text">All Domains Ready</span>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="security-badge-header">
+                        <span class="sec-icon">🔒</span>
+                        <span>PII Masked</span>
+                    </div>
+                    <div class="user-profile-badge">
+                        <div class="user-avatar" id="user-avatar">U</div>
+                        <div class="user-details">
+                            <span id="user-info" class="user-email">user@example.com</span>
+                            <span class="user-role" id="user-role">Authenticated User</span>
+                        </div>
+                    </div>
+                    <button id="logout-btn" class="btn btn-ghost" title="Logout">
+                        <span>Sign Out</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Views Container -->
+            <div class="views-container">
+                <!-- 1. CHAT VIEW -->
+                <section id="view-chat" class="view active">
+                    <div class="chat-layout">
+                        <!-- Quick Starters Bar -->
+                        <div class="starters-bar">
+                            <div class="starter-card" data-domain="schengen_visa" data-prompt="I am planning a 3-week vacation to France and Italy in December. Can you check my requirements?">
+                                <div class="starter-icon">✈️</div>
+                                <div class="starter-body">
+                                    <strong>Schengen Visa</strong>
+                                    <span>3-week trip to France & Italy</span>
+                                </div>
+                            </div>
+                            <div class="starter-card" data-domain="home_loan" data-prompt="I want to apply for a home loan of 50 lakhs. I earn 1.5 lakh per month. What documents do I need?">
+                                <div class="starter-icon">🏠</div>
+                                <div class="starter-body">
+                                    <strong>Home Loan</strong>
+                                    <span>₹50 Lakhs loan, ₹1.5L income</span>
+                                </div>
+                            </div>
+                            <div class="starter-card" data-domain="gst_registration" data-prompt="I want to register for GST as a freelancer. What are the requirements?">
+                                <div class="starter-icon">🏢</div>
+                                <div class="starter-body">
+                                    <strong>GST Registration</strong>
+                                    <span>Freelancer / Business Tax filing</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Messages Container -->
+                        <div id="chat-messages" class="chat-messages">
+                            <!-- Injected dynamically -->
+                        </div>
+
+                        <!-- Input Bar -->
+                        <div class="chat-input-wrapper">
+                            <form id="chat-form" class="chat-form">
+                                <input type="text" id="chat-input" placeholder="Ask DocuAgent anything (e.g. 'I want to apply for Schengen Visa...')" autocomplete="off">
+                                <button type="submit" class="btn btn-primary btn-send" id="chat-send-btn">
+                                    <span>Send</span>
+                                    <span class="send-arrow">➔</span>
+                                </button>
+                            </form>
+                            <div class="input-disclaimer">
+                                <span>🔒 End-to-end encrypted session. Documents in your vault are automatically checked for cross-domain reuse without re-asking.</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 2. DOCUMENTS VIEW (VAULT) -->
+                <section id="view-documents" class="view hidden">
+                    <div class="view-header">
+                        <div class="view-title-group">
+                            <h2>Personal Document Vault 🔐</h2>
+                            <p class="view-subtitle">Encrypted at rest with AES-GCM. Personal identifiable info (PII) is automatically masked.</p>
+                        </div>
+                        <div class="view-actions">
+                            <div class="search-box">
+                                <input type="text" id="doc-search-input" placeholder="Search documents...">
+                            </div>
+                            <select id="doc-domain-filter" class="select-filter">
+                                <option value="">All Domains</option>
+                                <option value="schengen_visa">Schengen Visa</option>
+                                <option value="home_loan">Home Loan</option>
+                                <option value="gst_registration">GST Registration</option>
+                            </select>
+                            <button id="upload-doc-btn" class="btn btn-primary">
+                                <span>+ Upload Document</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="documents-grid" class="cards-grid">
+                        <!-- Injected dynamically -->
+                    </div>
+
+                    <div id="documents-empty" class="empty-state hidden">
+                        <div class="empty-icon">📁</div>
+                        <h3>No Documents in Vault</h3>
+                        <p>Upload your passport, bank statements, or tax documents to enable cross-domain automation.</p>
+                        <button class="btn btn-primary" onclick="openUploadModal()">Upload First Document</button>
+                    </div>
+                </section>
+
+                <!-- 3. SUBMISSIONS VIEW -->
+                <section id="view-submissions" class="view hidden">
+                    <div class="view-header">
+                        <div class="view-title-group">
+                            <h2>Application Submissions 📋</h2>
+                            <p class="view-subtitle">End-to-end pipeline tracking for all your bureaucratic applications with state progression.</p>
+                        </div>
+                        <div class="view-actions">
+                            <button id="create-app-btn" class="btn btn-primary">
+                                <span>+ New Application</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="submissions-list" class="submissions-container">
+                        <!-- Injected dynamically -->
+                    </div>
+
+                    <div id="submissions-empty" class="empty-state hidden">
+                        <div class="empty-icon">📝</div>
+                        <h3>No Active Submissions</h3>
+                        <p>Start a new application or ask the AI Copilot to begin your Schengen Visa, Home Loan, or GST registration.</p>
+                        <button class="btn btn-primary" id="start-submission-btn">Create Application</button>
+                    </div>
+                </section>
+
+                <!-- 4. REMINDERS VIEW (NEW) -->
+                <section id="view-reminders" class="view hidden">
+                    <div class="view-header">
+                        <div class="view-title-group">
+                            <h2>Proactive Reminders & Deadlines ⏰</h2>
+                            <p class="view-subtitle">Automated monitoring for expiring passports, document validity limits, and scheduled follow-ups.</p>
+                        </div>
+                        <div class="view-actions">
+                            <button id="scan-reminders-btn" class="btn btn-outline">
+                                <span>🔍 Scan Vault Expirations</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="reminders-grid" class="reminders-grid">
+                        <!-- Injected dynamically -->
+                    </div>
+
+                    <div id="reminders-empty" class="empty-state hidden">
+                        <div class="empty-icon">🎉</div>
+                        <h3>All Clear! No Pending Reminders</h3>
+                        <p>All your stored documents have valid expiration dates and all application deadlines are on track.</p>
+                        <button class="btn btn-outline" onclick="triggerScanExpirations()">Run Vault Check</button>
+                    </div>
+                </section>
+
+                <!-- 5. AUDIT LOG VIEW -->
+                <section id="view-audit" class="view hidden">
+                    <div class="view-header">
+                        <div class="view-title-group">
+                            <h2>Immutable Security Audit Trail 🔒</h2>
+                            <p class="view-subtitle">Every operation, encryption access, agent decision, and auth attempt is permanently audited.</p>
+                        </div>
+                        <div class="audit-filters">
+                            <select id="audit-actor-filter" class="select-filter">
+                                <option value="">All Actors</option>
+                                <option value="user">User</option>
+                                <option value="agent">Agent</option>
+                                <option value="system">System</option>
+                            </select>
+                            <select id="audit-action-filter" class="select-filter">
+                                <option value="">All Actions</option>
+                                <option value="login">Login / Auth</option>
+                                <option value="upload">Upload</option>
+                                <option value="read">Read / Access</option>
+                                <option value="create">Create</option>
+                                <option value="update">Update</option>
+                                <option value="delete">Delete</option>
+                                <option value="chat">Chat Agent</option>
+                                <option value="gap_analysis">Gap Analysis</option>
+                                <option value="access_denied">Access Denied</option>
+                            </select>
+                            <button id="refresh-audit-btn" class="btn btn-outline">
+                                <span>⟳ Refresh Log</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="table-card">
+                        <div class="table-container">
+                            <table class="audit-table">
+                                <thead>
+                                    <tr>
+                                        <th>Timestamp</th>
+                                        <th>Actor</th>
+                                        <th>Action</th>
+                                        <th>Resource Type</th>
+                                        <th>Result</th>
+                                        <th>Context / Details</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="audit-table-body">
+                                    <!-- Injected dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="table-footer">
+                            <span id="audit-total-count">Loading audit records...</span>
+                            <span class="compliance-tag">🛡️ ISO/IEC 27001 & SOC-2 Audit Compliant</span>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- MODALS -->
+
+    <!-- 1. AUTH MODAL -->
+    <div id="auth-modal" class="modal">
+        <div class="modal-card auth-card">
+            <div class="auth-header">
+                <div class="auth-shield">🛡️</div>
+                <h2 id="auth-title">Welcome to DocuAgent</h2>
+                <p id="auth-subtitle">Secure access to your personal document vault & agent</p>
+            </div>
+
+            <div class="demo-credential-banner">
+                <div class="demo-info">
+                    <strong>Demo Mode Ready:</strong>
+                    <span>demo@example.com / demo123</span>
+                </div>
+                <button type="button" id="fill-demo-btn" class="btn btn-xs btn-primary">Quick Fill Demo</button>
+            </div>
+
+            <form id="auth-form" class="auth-form">
+                <div class="form-group register-only hidden">
+                    <label for="auth-name">Full Legal Name</label>
+                    <input type="text" id="auth-name" placeholder="John Doe">
+                </div>
+                <div class="form-group">
+                    <label for="auth-email">Email Address</label>
+                    <input type="email" id="auth-email" placeholder="demo@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="auth-password">Password</label>
+                    <input type="password" id="auth-password" placeholder="••••••••" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary btn-block" id="auth-submit-btn">Sign In</button>
+                </div>
+                <div class="auth-toggle">
+                    <a href="#" id="toggle-auth-mode">Need an account? Register with Zero-Knowledge Vault</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 2. UPLOAD MODAL -->
+    <div id="upload-modal" class="modal hidden">
+        <div class="modal-card upload-card">
+            <div class="modal-card-header">
+                <h3>Upload Document to Vault 🔐</h3>
+                <button type="button" class="btn-close" onclick="closeUploadModal()">✕</button>
+            </div>
+            <form id="upload-form">
+                <div class="dropzone" id="upload-dropzone">
+                    <div class="dropzone-icon">📤</div>
+                    <p class="dropzone-title">Drag & drop your document here, or <span class="browse-link">browse</span></p>
+                    <p class="dropzone-hint">PDF, JPG, PNG up to 15MB. Encrypted immediately with AES-GCM-256.</p>
+                    <input type="file" id="upload-file" required>
+                    <div id="selected-file-name" class="selected-file hidden"></div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="upload-doc-type">Document Type</label>
+                        <select id="upload-doc-type" required>
+                            <optgroup label="Identification">
+                                <option value="passport">Passport</option>
+                                <option value="pan_card">PAN Card</option>
+                                <option value="aadhaar_card">Aadhaar Card</option>
+                                <option value="passport_photo">Passport Photo</option>
+                            </optgroup>
+                            <optgroup label="Financial & Employment">
+                                <option value="bank_statement">Bank Statement (Last 3-6 Months)</option>
+                                <option value="salary_slip">Salary Slip</option>
+                                <option value="form_16">Form 16 / ITR</option>
+                                <option value="employment_letter">Employment Verification Letter</option>
+                            </optgroup>
+                            <optgroup label="Travel & Housing">
+                                <option value="travel_insurance">Travel Medical Insurance (EUR 30K+)</option>
+                                <option value="flight_itinerary">Flight Reservation</option>
+                                <option value="hotel_booking">Hotel Booking / Accommodation</option>
+                                <option value="property_documents">Property Documents / Sale Agreement</option>
+                            </optgroup>
+                            <optgroup label="Business & Tax">
+                                <option value="business_registration">Business Registration / Certificate</option>
+                                <option value="electricity_bill">Electricity / Utility Bill</option>
+                                <option value="other">Other Document</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="upload-expiry">Expiration Date (Optional)</label>
+                        <input type="date" id="upload-expiry">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Cross-Domain Reuse (Select Applicable Domains):</label>
+                    <div class="domain-checkboxes">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="linked_domain" value="schengen_visa" checked>
+                            <span>✈️ Schengen Visa</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="linked_domain" value="home_loan" checked>
+                            <span>🏠 Home Loan</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="linked_domain" value="gst_registration">
+                            <span>🏢 GST Registration</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="modal-card-footer">
+                    <button type="button" class="btn btn-ghost" id="upload-cancel-btn">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="upload-submit-btn">Encrypt & Upload</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 3. NEW APPLICATION MODAL -->
+    <div id="new-app-modal" class="modal hidden">
+        <div class="modal-card">
+            <div class="modal-card-header">
+                <h3>Start New Application 📋</h3>
+                <button type="button" class="btn-close" onclick="closeNewAppModal()">✕</button>
+            </div>
+            <form id="new-app-form">
+                <div class="form-group">
+                    <label for="app-domain">Select Domain</label>
+                    <select id="app-domain" required>
+                        <option value="schengen_visa">✈️ Schengen Visa Application</option>
+                        <option value="home_loan">🏠 Home Loan Application</option>
+                        <option value="gst_registration">🏢 GST Tax Registration</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="app-notes">Application Notes / Description</label>
+                    <textarea id="app-notes" rows="3" placeholder="e.g. 3-week tour to France & Italy in December"></textarea>
+                </div>
+                <div class="modal-card-footer">
+                    <button type="button" class="btn btn-ghost" onclick="closeNewAppModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Draft Application</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 4. DOCUMENT SECURITY DETAILS MODAL -->
+    <div id="doc-security-modal" class="modal hidden">
+        <div class="modal-card">
+            <div class="modal-card-header">
+                <h3>Security & Encryption Verification 🔒</h3>
+                <button type="button" class="btn-close" onclick="closeDocSecurityModal()">✕</button>
+            </div>
+            <div id="doc-security-content" class="security-inspection-body">
+                <!-- Injected dynamically -->
+            </div>
+            <div class="modal-card-footer">
+                <button type="button" class="btn btn-primary" onclick="closeDocSecurityModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="notifications-container"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+domain: home_loan
+display_name: Home Loan Application
+description: Residential home loan application process
+required_documents:
+  - type: identity_proof
+    description: pan_card, aadhaar_card, or passport (any one as ID proof)
+  - type: salary_slips
+    description: last 3 months
+  - type: bank_statement
+    description: last 6 months
+  - type: form_16
+    description: last 2 years IT returns
+  - type: property_documents
+    description: sale agreement, title deed
+  - type: property_valuation
+    description: approved valuer report
+  - type: passport_photo
+    description: Passport photo
+  - type: address_proof
+    description: Address proof
+conditional_requirements:
+  - condition: "employment_type == 'self_employed'"
+    then_require:
+      - type: business_proof
+        description: ITR for 3 years, business registration, CA certificate
+  - condition: "co_applicant == true"
+    then_require:
+      - type: co_applicant_documents
+        description: Co-applicant documents
+  - condition: "loan_amount > 5000000"
+    then_require:
+      - type: additional_collateral
+        description: Additional collateral
+eligibility_rules:
+  - rule: "monthly_income * 60 >= loan_amount"
+    message: "basic EMI affordability"
+  - rule: "age >= 21 and age <= 65"
+    message: "age between 21 and 65"
+  - rule: "min_employment_years >= 2"
+    message: "minimum 2 years employment"
+extraction_patterns:
+  loan_amount: "\\d+"
+  monthly_income: "\\d+"
+  property_value: "\\d+"
+  employment_type: "(salaried|self_employed)"

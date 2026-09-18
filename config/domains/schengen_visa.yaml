@@ -1,0 +1,44 @@
+domain: schengen_visa
+display_name: Schengen Visa Application
+description: Complete Schengen short-stay visa (Type C) application process
+required_documents:
+  - type: passport
+    description: Valid passport with at least 2 blank pages
+    expiry_check: true
+    min_validity_days: 180
+  - type: passport_photo
+    description: Two recent passport-size photographs, 35x45mm, white background
+  - type: travel_insurance
+    description: Travel medical insurance, minimum coverage EUR 30,000
+  - type: flight_itinerary
+    description: Round-trip flight reservation
+  - type: hotel_booking
+    description: Hotel reservation or accommodation proof for entire stay
+  - type: bank_statement
+    description: Bank statements for last 3 months showing sufficient funds
+  - type: cover_letter
+    description: Cover letter explaining purpose and itinerary of trip
+  - type: employment_letter
+    description: Employment verification letter or business registration
+conditional_requirements:
+  - condition: 'trip_duration > 90'
+    then_require:
+      - type: long_stay_visa_addendum
+        description: long_stay_visa_addendum
+  - condition: 'countries_count > 1'
+    then_require:
+      - type: multi_entry_justification
+        description: travel itinerary across countries
+  - condition: 'age < 18'
+    then_require:
+      - type: parental_consent
+        description: notarized parental consent letter
+eligibility_rules:
+  - rule: "trip_duration <= 90"
+    message: "trip <= 90 days for short stay"
+  - rule: "passport_valid == true"
+    message: "passport must be valid"
+extraction_patterns:
+  countries: "[A-Z][a-z]+"
+  duration: "\\d+"
+  month: "(January|February|March|April|May|June|July|August|September|October|November|December)"
